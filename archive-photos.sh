@@ -8,15 +8,18 @@ TARGET_DIR="$2"
 
 # Copy every file in a temp dir
 
+echo "Copying files into temporary folder: ${WORK_DIR}..."
 WORK_DIR="$(mktemp -d -p . -t XXXXXXXX)"
-exiftool -o . -directory="${WORK_DIR}"%f%e -if '($filetype eq "JPEG")' -r "${SRC_DIR}"
+exiftool -o . -filename="${WORK_DIR}"/%d%f.%e -if '($filetype eq "JPEG")' -r "${SRC_DIR}"
 
 #Update any photo that doesn't have DateTimeOriginal to have it based on file modify date
 
-#exiftool '-datetimeoriginal<filemodifydate' -if '(not $datetimeoriginal or ($datetimeoriginal eq "0000:00:00 00:00:00")) and ($filetype eq "JPEG")' -r "${WORK_DIR}"
+echo "Fixing pictures without exif data..."
+exiftool '-datetimeoriginal<filemodifydate' -if '(not $datetimeoriginal or ($datetimeoriginal eq "0000:00:00 00:00:00")) and ($filetype eq "JPEG")' -r "${WORK_DIR}"
 
 #Backup images
 
-#exiftool -o . '-FileName<DateTimeOriginal' -if '($filetype eq "JPEG")' -d "out/%Y-%m-%d/%Y-%m-%d_%H.%M.%S%%-.2c.jpg" -r "${WORK_DIR}"
+echo "Backup..."
+exiftool -o . '-FileName<DateTimeOriginal' -if '($filetype eq "JPEG")' -d "${TARGET_DIR}/%Y-%m-%d/%Y-%m-%d_%H.%M.%S%%-.2c.jpg" -r "${WORK_DIR}"
 
-#rm -rf "${WORK_DIR}"
+rm -rf "${WORK_DIR}"
