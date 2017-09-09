@@ -7,12 +7,15 @@ SRC_DIR="$1"
 TARGET_DIR="$2"
 
 if [ -d "${TARGET_DIR}" ]; then
-	read -p "Directory \"${TARGET_DIR}\" already exists: overwrite (Y/*)?" yn;
+	read -p "Directory \"${TARGET_DIR}\" already exists: overwrite [(Y)es/(m)erge/*]?" yn;
 	case $yn in
-		""|"Y"|"y") echo "yes";;
-		*) echo "no"; exit 0;;
+		""|"Y"|"y") rm -rf "${TARGET_DIR}";;
+		"M"|"m") ;;
+		*) exit 0;;
 	esac
 fi
+
+echo "continue program"; exit 0;
 
 # Copy every file in a temp dir
 
