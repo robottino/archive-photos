@@ -15,7 +15,7 @@ if [ -d "${TARGET_DIR}" ]; then
 	esac
 fi
 
-echo "continue program"; exit 0;
+#echo "continue program"; exit 0;
 
 # Copy every file in a temp dir
 
