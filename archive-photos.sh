@@ -9,9 +9,8 @@ FILE_TYPE="$3"
 
 #set proper extension
 case ${FILE_TYPE} in
-	"JPEG") FILE_EXTENSION="jpg"; DESIRED_MIME="image/jpeg" ;;
-	"MP4") FILE_EXTENSION="mp4"; DESIRED_MIME="video/mp4" ;;
-	*) echo "Supported file types: JPEG, MP4."; exit 0;;
+	"JPEG") FILE_EXTENSION="jpg" ;;
+	*) FILE_EXTENSION=${FILE_TYPE,,} ;;
 esac
 
 if [ -d "${TARGET_DIR}" ]; then
@@ -29,12 +28,12 @@ fi
 
 WORK_DIR="$(mktemp -d -p . -t XXXXXXXX)"
 echo "Copying files into temporary folder: ${WORK_DIR}..."
-#exiftool -o . -v0 -progress -filename="${WORK_DIR}"/%d%f.%e -if '($filetype eq "'${FILE_TYPE}'")' -r "${SRC_DIR}"
+exiftool -o . -v0 -progress -filename="${WORK_DIR}"/%d%f.%e -if '($filetype eq "'${FILE_TYPE}'")' -r "${SRC_DIR}"
 
-export DESIRED_MIME
-export WORK_DIR
-export N=1
-find "${SRC_DIR}" -type f -exec bash -c 'MIME=$(file -bi "{}" | cut -d\; -f1); if [ "${MIME}" == "${DESIRED_MIME}" ]; then echo -n "."; cp --parents "{}" "${WORK_DIR}"; fi' \;
+#export DESIRED_MIME
+#export WORK_DIR
+#export N=1
+#find "${SRC_DIR}" -type f -exec bash -c 'MIME=$(file -bi "{}" | cut -d\; -f1); if [ "${MIME}" == "${DESIRED_MIME}" ]; then echo -n "."; cp --parents "{}" "${WORK_DIR}"; fi' \;
 
 #remove duplicates
 echo "Removing duplicates..."
