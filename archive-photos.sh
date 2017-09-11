@@ -41,13 +41,16 @@ echo "Removing duplicates..."
 fdupes -rdN "${WORK_DIR}"
 
 #Update any photo that doesn't have DateTimeOriginal to have it based on file modify date
-
-echo "Fixing pictures without exif data..."
-exiftool -v0 -progress '-datetimeoriginal<CreateDate' -if '(not $datetimeoriginal or ($datetimeoriginal eq "0000:00:00 00:00:00")) and ($filetype eq "'${FILE_TYPE}'")' -r "${WORK_DIR}"
+#echo "Fixing pictures without exif data..."
+#exiftool -v0 -progress '-datetimeoriginal<CreateDate' -if '(not $datetimeoriginal or ($datetimeoriginal eq "0000:00:00 00:00:00")) and ($filetype eq "'${FILE_TYPE}'")' -r "${WORK_DIR}"
 
 #Backup images
 
-echo "Backup..."
+echo "Backup files without TAG DateTimeOriginal (using TAG CreateDate instead)..."
+exiftool -v0 -progress '-FileName<CreateDate' -if '(not $datetimeoriginal or ($datetimeoriginal eq "0000:00:00 00:00:00")) and ($filetype eq "'${FILE_TYPE}'")' -d "${TARGET_DIR}/%Y-%m/%Y-%m-%d_%H.%M.%S%%-.2c.${FILE_EXTENSION}" -r "${WORK_DIR}"
+
+echo "Backup files with proper TAG DateTimeOriginal..."
 exiftool -v0 -progress '-FileName<DateTimeOriginal' -if '($filetype eq "'${FILE_TYPE}'")' -d "${TARGET_DIR}/%Y-%m/%Y-%m-%d_%H.%M.%S%%-.2c.${FILE_EXTENSION}" -r "${WORK_DIR}"
+
 
 rm -rf "${WORK_DIR}"
